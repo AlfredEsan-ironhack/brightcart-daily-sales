@@ -1,4 +1,2 @@
 business_date,run_id,generated_at,customers_source,customers_valid,customers_rejected,orders_source,orders_valid,orders_rejected,report_rows,report_orders_total,net_revenue_gbp,reconciled
-2026-10-20,cli,2026-10-23T12:50:01+00:00,21,16,5,55,45,10,5,45,1288.64,True
-2026-10-21,cli,2026-10-23T12:50:01+00:00,21,16,5,53,43,10,5,43,1041.22,True
-2026-10-22,cli,2026-10-23T12:50:02+00:00,21,16,5,54,44,10,5,44,848.35,True
+2026-10-22,scheduled__2026-10-23T05:00:00+00:00,2026-10-23T13:35:23+00:00,21,16,5,54,44,10,5,44,848.35,True

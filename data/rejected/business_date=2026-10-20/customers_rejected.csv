@@ -1,6 +1,0 @@
-source_row_number,customer_id,first_name,email,country,signup_date,rejection_reasons,business_date
-17,C0003,Isla,isla.3@example.com,IE,2025-10-09,duplicate_customer_id,2026-10-20
-18,C0016,Harry,harry.example.com,UK,2025-06-01,invalid_email,2026-10-20
-19,,Unknown,nobody@example.com,UK,2025-06-01,missing_customer_id,2026-10-20
-20,C0017,Lena,lena@example.com,XX,2025-07-12,invalid_country,2026-10-20
-21,C0018,Omar,omar@example.com,NL,2026-13-01,invalid_signup_date,2026-10-20

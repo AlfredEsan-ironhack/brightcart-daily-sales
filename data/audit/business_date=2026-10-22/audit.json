@@ -1,7 +1,7 @@
 {
   "business_date": "2026-10-22",
-  "run_id": "cli",
-  "generated_at": "2026-10-23T12:50:02+00:00",
+  "run_id": "scheduled__2026-10-23T05:00:00+00:00",
+  "generated_at": "2026-10-23T13:35:23+00:00",
   "entities": {
     "customers": {
       "raw_file_sha256": "be6939aa7edc6990503e2e18838fb34cbfb95b8420eadf71de61a01c18951626",
@@ -38,7 +38,7 @@
     }
   },
   "report": {
-    "file": "/home/esan_alfred/ironhack/brightcart/data/curated/business_date=2026-10-22/daily_sales.csv",
+    "file": "/opt/airflow/data/curated/business_date=2026-10-22/daily_sales.csv",
     "rows": 5,
     "orders_total": 44,
     "orders_completed": 27,
