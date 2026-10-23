@@ -1,0 +1,21 @@
+{
+  "business_date": "2026-10-22",
+  "files": {
+    "customers": {
+      "source_file": "/home/esan_alfred/ironhack/brightcart/data/incoming/customers_2026-10-22.csv",
+      "raw_file": "/home/esan_alfred/ironhack/brightcart/data/raw/business_date=2026-10-22/customers.csv",
+      "sha256": "be6939aa7edc6990503e2e18838fb34cbfb95b8420eadf71de61a01c18951626",
+      "bytes": 1015,
+      "rows": 21,
+      "ingested_at": "2026-10-23T12:50:02+00:00"
+    },
+    "orders": {
+      "source_file": "/home/esan_alfred/ironhack/brightcart/data/incoming/orders_2026-10-22.csv",
+      "raw_file": "/home/esan_alfred/ironhack/brightcart/data/raw/business_date=2026-10-22/orders.csv",
+      "sha256": "0cb519288be962c7e00e31cd009db6f90b729e30e48558fe481180589bde3f1f",
+      "bytes": 3456,
+      "rows": 54,
+      "ingested_at": "2026-10-23T12:50:02+00:00"
+    }
+  }
+}

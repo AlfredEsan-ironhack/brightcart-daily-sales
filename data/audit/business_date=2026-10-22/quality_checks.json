@@ -1,0 +1,68 @@
+{
+  "business_date": "2026-10-22",
+  "checked_at": "2026-10-23T12:50:02+00:00",
+  "max_reject_rate": 0.05,
+  "freshness_hours": 24.0,
+  "results": [
+    {
+      "check": "customers_reconcile",
+      "passed": true,
+      "severity": "error",
+      "detail": "21 source = 16 valid + 5 rejected"
+    },
+    {
+      "check": "orders_reconcile",
+      "passed": true,
+      "severity": "error",
+      "detail": "54 source = 44 valid + 10 rejected"
+    },
+    {
+      "check": "no_duplicate_valid_orders",
+      "passed": true,
+      "severity": "error",
+      "detail": "0 duplicate order_id values in valid orders"
+    },
+    {
+      "check": "report_orders_tie_out",
+      "passed": true,
+      "severity": "error",
+      "detail": "report 44 vs valid orders 44"
+    },
+    {
+      "check": "report_revenue_tie_out",
+      "passed": true,
+      "severity": "error",
+      "detail": "report 848.35 vs recomputed 848.35 GBP"
+    },
+    {
+      "check": "report_date_matches",
+      "passed": true,
+      "severity": "error",
+      "detail": "unexpected dates in report: none"
+    },
+    {
+      "check": "report_fresh",
+      "passed": true,
+      "severity": "error",
+      "detail": "report written 0.00 h ago (limit 24.0 h)"
+    },
+    {
+      "check": "customers_reject_rate",
+      "passed": false,
+      "severity": "error",
+      "detail": "23.8% rejected (limit 5%)"
+    },
+    {
+      "check": "orders_reject_rate",
+      "passed": false,
+      "severity": "error",
+      "detail": "18.5% rejected (limit 5%)"
+    },
+    {
+      "check": "has_valid_orders",
+      "passed": true,
+      "severity": "warn",
+      "detail": "44 valid orders"
+    }
+  ]
+}

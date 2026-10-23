@@ -1,0 +1,11 @@
+source_row_number,order_id,customer_id,order_date,product_sku,quantity,unit_price_gbp,discount_pct,status,rejection_reasons,business_date
+44,O20261021-0043,C0016,2026-10-21,BC-MUG-01,1,8.50,0,completed,unknown_customer,2026-10-21
+45,O20261021-0044,C9999,2026-10-21,BC-MUG-01,1,8.50,0,completed,unknown_customer,2026-10-21
+46,O20261021-0045,C0001,2026-10-21,BC-MUG-01,0,8.50,0,shipped,invalid_quantity;invalid_status,2026-10-21
+47,O20261021-0046,C0001,2026-10-21,BC-MUG-01,two,8.50,0,completed,invalid_quantity,2026-10-21
+48,O20261021-0047,C0001,2026-10-21,BC-MUG-01,1,-5.00,0,completed,invalid_unit_price,2026-10-21
+49,O20261021-0048,C0001,2026-10-21,BC-MUG-01,1,abc,0,completed,invalid_unit_price,2026-10-21
+50,O20261021-0049,C0001,2026-10-21,BC-MUG-01,1,8.50,150,completed,invalid_discount_pct,2026-10-21
+51,O20261021-0050,C0001,2026-10-20,BC-MUG-01,1,8.50,0,completed,order_date_mismatch,2026-10-21
+52,,C0001,2026-10-21,BC-MUG-01,1,8.50,0,completed,missing_order_id,2026-10-21
+53,O20261021-0001,C0001,2026-10-21,BC-CAP-04,4,12.75,10,completed,duplicate_order_id,2026-10-21
