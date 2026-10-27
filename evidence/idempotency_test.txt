@@ -1,0 +1,5 @@
+Idempotency test, business date 2026-10-22 (run 2026-10-27)
+run 1:                 8aa918d1758b4680
+run 2 (rerun):         8aa918d1758b4680
+run 3 (after 'crash'): 8aa918d1758b4680
+audit rows for 2026-10-22: 1

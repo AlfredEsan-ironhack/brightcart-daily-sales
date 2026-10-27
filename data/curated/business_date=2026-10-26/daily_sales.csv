@@ -1,0 +1,6 @@
+business_date,country,orders_total,orders_completed,orders_cancelled,orders_refunded,orders_pending,units_sold,unique_customers,gross_revenue_gbp,discount_gbp,net_revenue_gbp,avg_order_value_gbp
+2026-10-26,DE,6,3,1,1,1,6,2,124.8,8.08,116.72,38.91
+2026-10-26,FR,1,1,0,0,0,2,1,30.0,0.0,30.0,30.0
+2026-10-26,IE,10,7,1,1,1,19,3,390.25,25.83,364.42,52.06
+2026-10-26,NL,5,3,1,0,1,9,1,155.85,13.96,141.89,47.3
+2026-10-26,UK,17,10,2,3,2,20,5,233.3,10.45,222.85,22.28

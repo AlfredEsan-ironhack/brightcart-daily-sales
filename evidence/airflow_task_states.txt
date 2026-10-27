@@ -1,0 +1,39 @@
+== incident_2026-10-19
+dag_id                 | logical_date              | task_id                 | state           | start_date                       | end_date                        
+=======================+===========================+=========================+=================+==================================+=================================
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | wait_for_customers_file | success         | 2026-10-27T18:33:19.289219+00:00 | 2026-10-27T18:33:19.473213+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | wait_for_orders_file    | success         | 2026-10-27T18:33:19.291984+00:00 | 2026-10-27T18:33:19.499230+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | ingest_raw              | success         | 2026-10-27T19:03:24.036254+00:00 | 2026-10-27T19:03:24.911022+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | validate_customers      | success         | 2026-10-27T19:03:25.195183+00:00 | 2026-10-27T19:03:26.015697+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | validate_orders         | failed          | 2026-10-27T19:03:26.409234+00:00 | 2026-10-27T19:03:27.266780+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | build_daily_sales       | upstream_failed | 2026-10-27T18:33:24.261673+00:00 | 2026-10-27T18:33:24.261673+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | write_audit             | upstream_failed | 2026-10-27T18:33:25.328928+00:00 | 2026-10-27T18:33:25.328928+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | run_quality_checks      | upstream_failed | 2026-10-27T18:33:26.387465+00:00 | 2026-10-27T18:33:26.387465+00:00
+brightcart_daily_sales | 2026-10-19T12:00:00+00:00 | publish_report          | upstream_failed | 2026-10-27T18:33:27.449328+00:00 | 2026-10-27T18:33:27.449328+00:00
+                                                                                                                                                                    
+== recovery_2026-10-19
+dag_id                 | logical_date              | task_id                 | state   | start_date                       | end_date                        
+=======================+===========================+=========================+=========+==================================+=================================
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | wait_for_customers_file | success | 2026-10-27T19:04:45.131124+00:00 | 2026-10-27T19:04:45.400260+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | wait_for_orders_file    | success | 2026-10-27T19:04:45.154937+00:00 | 2026-10-27T19:04:45.428290+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | ingest_raw              | success | 2026-10-27T19:04:46.304484+00:00 | 2026-10-27T19:04:47.016533+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | validate_customers      | success | 2026-10-27T19:04:47.496816+00:00 | 2026-10-27T19:04:48.212697+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | validate_orders         | success | 2026-10-27T19:04:48.622070+00:00 | 2026-10-27T19:04:49.457813+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | build_daily_sales       | success | 2026-10-27T19:04:49.843685+00:00 | 2026-10-27T19:04:51.072237+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | write_audit             | success | 2026-10-27T19:04:52.078497+00:00 | 2026-10-27T19:04:52.699258+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | run_quality_checks      | success | 2026-10-27T19:04:52.857523+00:00 | 2026-10-27T19:04:53.746191+00:00
+brightcart_daily_sales | 2026-10-19T12:00:01+00:00 | publish_report          | success | 2026-10-27T19:04:54.199498+00:00 | 2026-10-27T19:04:54.927771+00:00
+                                                                                                                                                            
+== gate_test_2026-10-22
+dag_id                 | logical_date              | task_id                 | state   | start_date                       | end_date                        
+=======================+===========================+=========================+=========+==================================+=================================
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | ingest_raw              | success | 2026-10-27T19:17:06.924536+00:00 | 2026-10-27T19:17:07.544016+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | validate_orders         | success | 2026-10-27T19:17:09.114239+00:00 | 2026-10-27T19:17:10.623611+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | build_daily_sales       | success | 2026-10-27T19:17:11.536531+00:00 | 2026-10-27T19:17:13.031050+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | write_audit             | success | 2026-10-27T19:17:13.543658+00:00 | 2026-10-27T19:17:14.274540+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | publish_report          | success | 2026-10-27T19:38:38.827126+00:00 | 2026-10-27T19:38:39.581690+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | wait_for_customers_file | success | 2026-10-27T19:17:05.817211+00:00 | 2026-10-27T19:17:06.009121+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | wait_for_orders_file    | success | 2026-10-27T19:17:05.833168+00:00 | 2026-10-27T19:17:06.050006+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | run_quality_checks      | success | 2026-10-27T19:38:37.698903+00:00 | 2026-10-27T19:38:38.436337+00:00
+brightcart_daily_sales | 2026-10-22T12:00:00+00:00 | validate_customers      | success | 2026-10-27T19:17:08.030207+00:00 | 2026-10-27T19:17:08.757220+00:00
+                                                                                                                                                            

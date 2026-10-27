@@ -1,0 +1,11 @@
+source_row_number,order_id,customer_id,order_date,product_sku,quantity,unit_price_gbp,discount_pct,status,rejection_reasons,business_date
+40,O20261026-0039,C0016,2026-10-26,BC-MUG-01,1,8.50,0,completed,unknown_customer,2026-10-26
+41,O20261026-0040,C9999,2026-10-26,BC-MUG-01,1,8.50,0,completed,unknown_customer,2026-10-26
+42,O20261026-0041,C0001,2026-10-26,BC-MUG-01,0,8.50,0,shipped,invalid_quantity;invalid_status,2026-10-26
+43,O20261026-0042,C0001,2026-10-26,BC-MUG-01,two,8.50,0,completed,invalid_quantity,2026-10-26
+44,O20261026-0043,C0001,2026-10-26,BC-MUG-01,1,-5.00,0,completed,invalid_unit_price,2026-10-26
+45,O20261026-0044,C0001,2026-10-26,BC-MUG-01,1,abc,0,completed,invalid_unit_price,2026-10-26
+46,O20261026-0045,C0001,2026-10-26,BC-MUG-01,1,8.50,150,completed,invalid_discount_pct,2026-10-26
+47,O20261026-0046,C0001,2026-10-25,BC-MUG-01,1,8.50,0,completed,order_date_mismatch,2026-10-26
+48,,C0001,2026-10-26,BC-MUG-01,1,8.50,0,completed,missing_order_id,2026-10-26
+49,O20261026-0001,C0005,2026-10-26,BC-TEE-02,4,15.00,10,refunded,duplicate_order_id,2026-10-26

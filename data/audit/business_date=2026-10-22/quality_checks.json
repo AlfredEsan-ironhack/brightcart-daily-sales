@@ -1,6 +1,6 @@
 {
   "business_date": "2026-10-22",
-  "checked_at": "2026-10-23T13:35:24+00:00",
+  "checked_at": "2026-10-27T19:38:38+00:00",
   "max_reject_rate": 0.3,
   "freshness_hours": 24.0,
   "results": [
@@ -44,7 +44,7 @@
       "check": "report_fresh",
       "passed": true,
       "severity": "error",
-      "detail": "report written 0.00 h ago (limit 24.0 h)"
+      "detail": "report written 0.36 h ago (limit 24.0 h)"
     },
     {
       "check": "customers_reject_rate",

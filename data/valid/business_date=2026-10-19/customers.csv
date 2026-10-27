@@ -1,0 +1,17 @@
+source_row_number,customer_id,first_name,email,country,signup_date,business_date
+2,C0001,Amelia,amelia.1@example.com,UK,2025-04-25,2026-10-19
+3,C0002,Oliver,oliver.2@example.com,UK,2025-01-26,2026-10-19
+4,C0003,Isla,isla.3@example.com,IE,2025-10-09,2026-10-19
+5,C0004,George,george.4@example.com,NL,2025-09-08,2026-10-19
+6,C0005,Ava,ava.5@example.com,DE,2025-08-17,2026-10-19
+7,C0006,Noah,noah.6@example.com,FR,2025-05-23,2026-10-19
+8,C0007,Mia,mia.7@example.com,UK,2025-04-15,2026-10-19
+9,C0008,Leo,leo.8@example.com,UK,2026-07-13,2026-10-19
+10,C0009,Freya,freya.9@example.com,UK,2025-03-31,2026-10-19
+11,C0010,Arthur,arthur.10@example.com,IE,2026-03-09,2026-10-19
+12,C0011,Sophie,sophie.11@example.com,NL,2025-02-02,2026-10-19
+13,C0012,Jack,jack.12@example.com,DE,2025-01-31,2026-10-19
+14,C0013,Emma,emma.13@example.com,FR,2025-04-06,2026-10-19
+15,C0014,Liam,liam.14@example.com,UK,2025-08-12,2026-10-19
+16,C0015,Daan,daan.15@example.com,UK,2025-08-27,2026-10-19
+22,C0019,Zoe,zoe@example.com,IE,2026-02-14,2026-10-19

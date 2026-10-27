@@ -1,0 +1,48 @@
+{
+  "business_date": "2026-10-19",
+  "run_id": "recovery_2026-10-19",
+  "generated_at": "2026-10-27T19:04:52+00:00",
+  "entities": {
+    "customers": {
+      "raw_file_sha256": "be6939aa7edc6990503e2e18838fb34cbfb95b8420eadf71de61a01c18951626",
+      "source_rows": 21,
+      "valid_rows": 16,
+      "rejected_rows": 5,
+      "reconciled": true,
+      "reject_rate": 0.2381,
+      "rejection_reasons": {
+        "duplicate_customer_id": 1,
+        "invalid_country": 1,
+        "invalid_email": 1,
+        "invalid_signup_date": 1,
+        "missing_customer_id": 1
+      }
+    },
+    "orders": {
+      "raw_file_sha256": "ae3ea26a9a246ba6f3bb56c77b920132b36107fc3e2eb79b1aa6c6ca763fd814",
+      "source_rows": 53,
+      "valid_rows": 43,
+      "rejected_rows": 10,
+      "reconciled": true,
+      "reject_rate": 0.1887,
+      "rejection_reasons": {
+        "duplicate_order_id": 1,
+        "invalid_discount_pct": 1,
+        "invalid_quantity": 2,
+        "invalid_status": 1,
+        "invalid_unit_price": 2,
+        "missing_order_id": 1,
+        "order_date_mismatch": 1,
+        "unknown_customer": 2
+      }
+    }
+  },
+  "report": {
+    "file": "/opt/airflow/data/curated/business_date=2026-10-19/daily_sales.csv",
+    "rows": 5,
+    "orders_total": 43,
+    "orders_completed": 29,
+    "net_revenue_gbp": 933.48,
+    "expected_net_revenue_gbp_from_valid_orders": 933.48
+  }
+}

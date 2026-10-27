@@ -1,7 +1,7 @@
 {
   "business_date": "2026-10-22",
-  "run_id": "scheduled__2026-10-23T05:00:00+00:00",
-  "generated_at": "2026-10-23T13:35:23+00:00",
+  "run_id": "gate_test_2026-10-22",
+  "generated_at": "2026-10-27T19:17:14+00:00",
   "entities": {
     "customers": {
       "raw_file_sha256": "be6939aa7edc6990503e2e18838fb34cbfb95b8420eadf71de61a01c18951626",

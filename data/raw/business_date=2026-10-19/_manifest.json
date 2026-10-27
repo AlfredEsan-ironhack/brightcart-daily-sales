@@ -1,0 +1,21 @@
+{
+  "business_date": "2026-10-19",
+  "files": {
+    "customers": {
+      "source_file": "/opt/airflow/data/incoming/customers_2026-10-19.csv",
+      "raw_file": "/opt/airflow/data/raw/business_date=2026-10-19/customers.csv",
+      "sha256": "be6939aa7edc6990503e2e18838fb34cbfb95b8420eadf71de61a01c18951626",
+      "bytes": 1015,
+      "rows": 21,
+      "ingested_at": "2026-10-27T18:33:21+00:00"
+    },
+    "orders": {
+      "source_file": "/opt/airflow/data/incoming/orders_2026-10-19.csv",
+      "raw_file": "/opt/airflow/data/raw/business_date=2026-10-19/orders.csv",
+      "sha256": "ae3ea26a9a246ba6f3bb56c77b920132b36107fc3e2eb79b1aa6c6ca763fd814",
+      "bytes": 3388,
+      "rows": 53,
+      "ingested_at": "2026-10-27T19:04:46+00:00"
+    }
+  }
+}
