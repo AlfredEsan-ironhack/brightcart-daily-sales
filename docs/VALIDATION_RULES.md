@@ -59,7 +59,8 @@ country (needed for the report) can't be trusted.
 - Only `completed` orders count towards units, customers and revenue. All valid orders are counted by status.
 - `avg_order_value_gbp` = net revenue / completed orders; blank when there are no completed orders.
 
-## Rows rejected on 2026-10-18
+
+## Rows rejected on 2026-10-22
 
 Customers: 21 received, 16 valid, 5 rejected.
 
@@ -71,22 +72,22 @@ Customers: 21 received, 16 valid, 5 rejected.
 | 20 | C0017 | invalid_country | `XX` |
 | 21 | C0018 | invalid_signup_date | `2026-13-01` (month 13) |
 
-Kept, not rejected: row 22 `  C0019 ` with ` ZOE@Example.com ` and ` ie ` is valid after standardisation.
+Kept, not rejected: row 22, `  C0019 ` with ` ZOE@Example.com ` and ` ie `, is valid after standardisation.
 
-Orders: 55 received, 45 valid, 10 rejected.
+Orders: 54 received, 44 valid, 10 rejected.
 
 | Row | order_id | Reason(s) | What was wrong |
 |---|---|---|---|
-| 46 | O20261018-0045 | unknown_customer | C0016 was rejected (bad email) |
-| 47 | O20261018-0046 | unknown_customer | C9999 doesn't exist |
-| 48 | O20261018-0047 | invalid_quantity; invalid_status | quantity 0 and status `shipped` |
-| 49 | O20261018-0048 | invalid_quantity | `two` |
-| 50 | O20261018-0049 | invalid_unit_price | `-5.00` |
-| 51 | O20261018-0050 | invalid_unit_price | `abc` |
-| 52 | O20261018-0051 | invalid_discount_pct | `150` |
-| 53 | O20261018-0052 | order_date_mismatch | dated 2026-10-17 in the 18th's file |
-| 54 | (empty) | missing_order_id | no id |
-| 55 | O20261018-0001 | duplicate_order_id | exact copy of row 2 |
+| 45 | O20261022-0044 | unknown_customer | C0016 was rejected (bad email) |
+| 46 | O20261022-0045 | unknown_customer | C9999 doesn't exist |
+| 47 | O20261022-0046 | invalid_quantity; invalid_status | quantity 0 and status `shipped` |
+| 48 | O20261022-0047 | invalid_quantity | `two` |
+| 49 | O20261022-0048 | invalid_unit_price | `-5.00` |
+| 50 | O20261022-0049 | invalid_unit_price | `abc` |
+| 51 | O20261022-0050 | invalid_discount_pct | `150` |
+| 52 | O20261022-0051 | order_date_mismatch | dated 2026-10-21 in the 22 Oct file |
+| 53 | (empty) | missing_order_id | no id |
+| 54 | O20261022-0001 | duplicate_order_id | exact copy of row 2 |
 
 Kept, not rejected: the order with status ` Completed ` is valid after standardisation.
 The same pattern of planted errors appears on every sample date (see `data/rejected/`).

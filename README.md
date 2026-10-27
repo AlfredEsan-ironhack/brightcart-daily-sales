@@ -1,173 +1,138 @@
-# BrightCart Daily Sales Pipeline
+# Shipping Technology Data Platform
 
-A daily batch pipeline that turns BrightCart's customer and order files into a trusted daily sales report.
-It keeps the raw files unchanged, validates every row, keeps rejected rows with the reason, writes audit
-evidence that the counts reconcile, and only publishes the report after a quality gate passes.
-Apache Airflow orchestrates it; the data logic is plain Python that also runs without Airflow.
+A small data platform that ingests raw GPS logs from two cargo vessels, validates and cleans them, joins them with weather data along their route, persists everything in Postgres, and serves a handful of metrics through a FastAPI service. Built as a take-home assessment for a Data Platform Engineer role.
 
-```
-incoming/ ──► [wait for both files] ──► ingest_raw ──► validate_customers ──► validate_orders
-                                                                                   │
-published/ ◄── publish_report ◄── run_quality_checks ◄── write_audit ◄── build_daily_sales
-```
+## Stack
 
-## Layers
+- Python 3.11
+- pandas (parsing/cleaning)
+- SQLAlchemy 2.0 + Postgres 16
+- FastAPI + Pydantic (API layer)
+- pytest (validation logic is unit tested)
+- Docker Compose (single-command reproduction)
 
-| Layer | Folder | Contents | Rule |
-|---|---|---|---|
-| Landing | `data/incoming/` | `customers_<date>.csv`, `orders_<date>.csv` as delivered | Source system writes here |
-| Raw | `data/raw/business_date=<date>/` | Byte-for-byte copies + `_manifest.json` (SHA-256, rows, time) | Never edited, never silently overwritten |
-| Valid | `data/valid/business_date=<date>/` | Cleaned, typed rows that passed every rule | Each row keeps `source_row_number` |
-| Rejected | `data/rejected/business_date=<date>/` | Original rows that failed, with `rejection_reasons` | Nothing is dropped silently |
-| Curated | `data/curated/business_date=<date>/daily_sales.csv` | Daily sales by country | Grain: one row per date per country |
-| Audit | `data/audit/` | `audit.json`, `quality_checks.json` per date, `audit_log.csv` across dates | Recounted from files on disk |
-| Published | `data/published/` | Report copy + `_SUCCESS` per date, and `latest/` | Only written after the gate passes |
+All dependency versions are pinned in `requirements.txt`.
 
-Every output for a date lives in its own `business_date=` folder, so a rerun or backfill rewrites only that
-date. All files are written atomically (temp file, then rename), so a crash never leaves half a file.
-
-## Project structure
+## How it fits together
 
 ```
-brightcart/
-├── dags/brightcart_daily_sales.py   Airflow DAG (orchestration only)
-├── pipeline/
-│   ├── config.py      paths, entities, business rules, thresholds
-│   ├── io_utils.py    atomic writes, checksums, text-only CSV reading
-│   ├── ingest.py      step 1: landing -> raw
-│   ├── validate.py    step 2: raw -> valid + rejected
-│   ├── report.py      step 3: valid -> curated daily sales
-│   ├── audit.py       step 4: audit evidence
-│   ├── checks.py      step 5: quality gate
-│   ├── publish.py     step 6: publish
-│   └── alerts.py      on_failure_callback
-├── scripts/make_sample_data.py      generates the sample source files
-├── run_pipeline.py                  runs every step without Airflow
-├── tests/test_pipeline.py           25 unit tests for the rules
-├── docs/VALIDATION_RULES.md         every rule, and the rows rejected
-├── docs/RECOVERY.md                 failure scenarios and recovery steps
-├── evidence/                        Airflow run states, sample alerts
-└── data/                            sample inputs and outputs (2026-10-16 .. 2026-10-19)
+raw_messages_clean.csv  ─┐
+                          ├──▶  ingest.py  ──▶  Postgres  ──▶  FastAPI
+weather_data.json       ─┘         │                              │
+                                    ▼                              ▼
+                          rejected_messages table          /health
+                          (nothing silently dropped)        /metrics/average-speed
+                                                              /metrics/wind-speed
 ```
 
-## Setup
+Every row from the ship logs gets checked before it's allowed anywhere near the database. If a row is broken, it doesn't get thrown away. It gets stored in its own table with a clear reason why it failed, so nothing ever disappears without a trace.
+
+## Getting it running
+
+You genuinely just need Docker and an internet connection. That's it.
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+docker compose up --build
 ```
 
-## Run without Airflow (Day 1)
+Give it a few minutes on the first run, since it needs to pull images and install everything fresh. Once it settles, open your browser to:
 
-```bash
-python scripts/make_sample_data.py 2026-10-16 2026-10-17 2026-10-18
-python run_pipeline.py --date 2026-10-18
-python -m pytest -q                       # 25 passed
+```
+http://localhost:8000/docs
 ```
 
-Each step prints its counts; the run ends with the 10 quality checks and `Done: 2026-10-18 published.`
-Try `--max-reject-rate 0.05` to watch the quality gate stop the publish.
+You'll see the three endpoints, live and callable right from the page. Under the hood, the database spins up first, the ingest job runs once to load all the data, and then the API comes online. You don't have to do any of that by hand.
 
-## Run with Airflow (Day 2)
+## Endpoints
 
-```bash
-export AIRFLOW_HOME=~/airflow
-export AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags
-export AIRFLOW__CORE__LOAD_EXAMPLES=False
-airflow db migrate
-airflow connections add brightcart_fs --conn-type fs --conn-extra "{\"path\": \"$(pwd)/data\"}"
-airflow standalone                        # UI at http://localhost:8080, login printed in the terminal
+### `GET /health`
+```json
+{"status": "ok"}
 ```
 
-Then, in a second terminal (same exports):
+### `GET /metrics/average-speed?date=2019-02-13`
+Hourly average speed per ship, for that UTC day. Only positions flagged reliable (`status='A'`) are counted; readings flagged as a navigation warning are stored but excluded, so a shaky GPS fix can't skew the number.
 
-```bash
-airflow dags test brightcart_daily_sales 2026-10-18                        # one full run, in order
-airflow backfill create --dag-id brightcart_daily_sales \
-    --from-date 2026-10-16 --to-date 2026-10-17T23:59:59 --max-active-runs 1   # rebuild past dates
+```json
+{
+  "date": "2019-02-13",
+  "results": [
+    {"device_id": "st-1a2090", "hour": 12, "avg_speed_knots": 11.06},
+    {"device_id": "st-1a2090", "hour": 13, "avg_speed_knots": 8.89}
+  ]
+}
 ```
 
-Optional Airflow Variables (change behaviour without changing code):
+### `GET /metrics/wind-speed?device_id=st-1a2090`
+Daily min and max wind speed near that ship's route, in metres per second.
 
-| Variable | Default | Meaning |
-|---|---|---|
-| `brightcart_max_reject_rate` | `0.30` | Max share of rejected rows per entity before the gate fails |
-| `brightcart_freshness_hours` | `24` | Max age of the report when the gate runs |
+```json
+{
+  "device_id": "st-1a2090",
+  "results": [
+    {"day": "2019-02-13", "min_wind_spd_ms": 1.0, "max_wind_spd_ms": 7.0}
+  ]
+}
+```
 
-**Schedule and dates.** The DAG runs daily at 06:00 London time. One run = one business day: the run that
-starts on the 19th has `ds = 2026-10-18` and processes the 18th's files. This uses
-`CronDataIntervalTimetable`, which behaves the same in Airflow 2 and 3 (Airflow 3's default cron timetable
-would give `ds` = the run day instead). 06:00 London is the same calendar date in UTC all year, so `ds`
-never shifts with summer time. `catchup=False` (history is rebuilt only by deliberate backfill) and
-`max_active_runs=1` (dates run one at a time).
+Bad input on either query param returns a clean `422` with a proper validation message, not a stack trace. Full interactive docs (and a place to try these yourself) live at `/docs`.
 
-## Task design
+## Data model
 
-| Task | Retries | Why |
-|---|---|---|
-| `wait_for_customers_file`, `wait_for_orders_file` | n/a (sensor) | Check every 5 min, `mode="reschedule"` (no worker held), time out after 3 h and alert |
-| `ingest_raw` | 2, exponential backoff | Only step exposed to transient storage errors |
-| `validate_*`, `build_daily_sales`, `write_audit`, `run_quality_checks`, `publish_report` | 0 | Deterministic: the same input gives the same failure, so fix, don't retry |
+**`ship_positions`** — the clean layer. One row per validated GPS message: `device_id` (text, keeps leading zeros like `0001`), `ts_utc`, `status` (`A`/`V`), signed `lat`/`lon` (south and west are negative), `speed_knots`, `true_course`, `mag_variation`, and `row_hash`, a sha256 fingerprint of the original 15 raw fields. `row_hash` is unique, so re-running ingestion never inserts the same row twice.
 
-Deterministic failures (`SchemaError`, `RawConflictError`, missing file) raise `AirflowFailException`, which
-fails the task at once and skips retries. Every failure after retries calls `on_failure_alert`, which writes
-an actionable alert (DAG, task, run, business date, try, error, log URL, next step) to the log and to
-`data/alerts/alerts.jsonl`.
+**`rejected_messages`** — the quarantine. Every row that fails validation lands here with a plain-English `reject_reason` instead of being dropped. Nothing disappears silently.
 
-## How to verify a run
+**`weather_readings`** — one row per hourly weather reading, tagged with `city_name`, the source block's `block_lat`/`block_lon`, `wind_spd_ms`, and `nearest_device_id` (the ship it was matched against), so metric (b) is a straight `GROUP BY`.
 
-1. `data/audit/audit_log.csv`: one row per date; `reconciled=True` means source = valid + rejected for both files.
-2. `data/audit/business_date=<date>/quality_checks.json`: all 10 checks with their numbers.
-3. `data/published/business_date=<date>/_SUCCESS`: present only if the gate passed (contains the report checksum).
-4. `data/rejected/...`: every rejected row with its reasons and original values.
+## Running it end to end
 
-The quality gate:
+Real numbers from the last clean run, tearing everything down first:
 
-| Check | Proves |
-|---|---|
-| `customers_reconcile`, `orders_reconcile` | No row was lost or invented |
-| `no_duplicate_valid_orders` | Each order counted once |
-| `report_orders_tie_out` | Report orders = valid orders |
-| `report_revenue_tie_out` | Report revenue = revenue recomputed from valid orders |
-| `report_date_matches` | Report is for the right day |
-| `report_fresh` | Report was written within the freshness window |
-| `customers_reject_rate`, `orders_reject_rate` | Source quality is within tolerance |
-| `has_valid_orders` (warn) | Flags a possible no-sales day without blocking it |
+```
+docker compose down -v
+docker compose up --build
+```
 
-## Results on the sample data
+```
+positions_inserted: 29052
+positions_skipped: 0
+rejected: 0
+weather_rows: 384
+weather_skipped: 0
+```
 
-| business_date | customers source / valid / rejected | orders source / valid / rejected | net revenue GBP | reconciled |
-|---|---|---|---|---|
-| 2026-10-16 | 21 / 16 / 5 | 50 / 40 / 10 | 881.13 | True |
-| 2026-10-17 | 21 / 16 / 5 | 51 / 41 / 10 | 1,133.39 | True |
-| 2026-10-18 | 21 / 16 / 5 | 55 / 45 / 10 | 804.94 | True |
-| 2026-10-19 | 21 / 16 / 5 | 53 / 43 / 10 | 933.48 | True |
+Then open `http://localhost:8000/docs`.
 
-The sample data is deliberately dirty (each file contains the same planted errors), which is why the
-reject-rate limit defaults to 30%. A production limit would be closer to 1-2%.
+## Running the tests
 
-Airflow runs captured in `evidence/airflow_dag_runs.txt`: a manual run, a scheduled run, a two-date backfill,
-an infrastructure failure recovered with a clear, a schema-break incident recovered with a forced re-ingest,
-and a quality-gate failure that correctly blocked publishing. Scenarios are written up in `docs/RECOVERY.md`.
+```
+pytest tests/test_validation.py -v
+```
 
-## Design decisions
+45 tests, all passing: a clean row parses with correct sign folding and a stable hash, every rejection rule fires with the right reason, and missing or blank fields are caught individually across all 15 source fields.
 
-- **Raw is evidence.** Same file again = skip. Different file for an ingested date = fail loudly. Replacing
-  raw needs a deliberate `force_reingest`, and the old file is archived in `raw/_superseded/`.
-- **Two kinds of bad data.** A missing column fails the task (`SchemaError`); a bad value rejects the row.
-- **Money in exact decimals.** Amounts are computed with `Decimal` and summed in whole pence, rounding half-up.
-  An earlier float version was one penny off on UK revenue (25.50 x 15% = 3.825 rounded to 3.82); the
-  independent revenue recompute caught it.
-- **Write-audit-publish.** The report is built in `curated/`, checked, then copied to `published/`.
-  `published/latest/` only moves forward, so a backfill of an old date never replaces the newest report.
-- **Thin DAG.** Pipeline modules are imported inside task functions, so parsing the DAG doesn't load pandas.
+## Assumptions
 
-## Known limitations
+Full reasoning and alternatives considered for each of these are in `docs/decisions.md`. Short version:
 
-- Local filesystem only; in production the layers would sit in object storage (S3/ADLS) as Parquet or Delta.
-- CSV outputs are for easy inspection; they don't preserve types as Parquet would.
-- Duplicate IDs keep the first occurrence; with conflicting duplicates the "right" row isn't determined.
-- Customers arrive as a full daily snapshot; there's no history of customer changes (no SCD Type 2).
-- Alerts go to a log file; Slack/Teams/email delivery is a stub in `pipeline/alerts.py`.
-- `sys.path` is extended in the DAG file to find `pipeline/`; a real deployment would install it as a package.
-- Single process; volumes far beyond a few million rows would need Spark, DuckDB, or the warehouse.
+1. **Time source is the `datetime` column, parsed as UTC.** The brief says unix timestamp; the actual file has text timestamps (`2019-02-13 10:15:00`). Coded against the real data and logged the mismatch. The embedded `datestamp` field is never used for time logic. It's unreliable: one device's embedded date read 2018 while everything else in the file pointed to February 2019.
+2. **Coordinates are plain decimal degrees, not NMEA ddmm.mm.** Verified against the actual values (all latitudes ≤ 90) rather than assumed.
+3. **Wind speed (`wind_spd`) is metres per second.** The weather JSON's shape matches the Weatherbit historical API, which reports wind in m/s. Stated as an explicit assumption, not treated as fact.
+4. **Weather is joined to the nearest ship position on the same UTC day**, via haversine distance. The weather blocks' coordinates coincide with the ship's own GPS track, so this match is exact in practice. Haversine is used over flat Euclidean distance because a degree of longitude shrinks the further you are from the equator.
+5. **Idempotency key is `row_hash`, not `original_message_id`.** The source IDs repeat, but no two rows are fully identical, so the ID alone can't be trusted as unique. Every row is fingerprinted (sha256 of all 15 raw fields) instead, with a unique constraint. Re-running ingestion inserts nothing new.
+6. **Average speed only counts `status='A'` rows.** `V` (navigation receiver warning) rows are stored but excluded, since a device flagging its own fix as unreliable shouldn't be allowed to skew the average.
+7. **`device_id` is text, not numeric.** One ship's ID is `0001`; storing it as a number silently drops the leading zeros the moment anything (like Excel) touches it.
+
+## Shortcuts taken, and the production alternative
+
+- **Ingestion is a single one-shot script.** Production: orchestrated incremental loads (Airflow or Dagster), schema migrations via Alembic, data quality checks as code (Great Expectations) rather than a hand-written validator.
+- **Weather-to-ship matching runs as a plain Python nested loop.** Fine at this scale (27k positions × 384 readings). Production: a spatial index like PostGIS.
+- **No authentication on the API.** Production: sits behind a gateway with API keys.
+- **Everything runs through Docker Compose locally.** Production: managed Postgres, container orchestration, and a real deployment pipeline.
+- **Rejected rows are quarantined but nothing alerts on them.** Production: a spike in rejection rate should page someone, not wait to be noticed.
+- **No CI.** Tests exist and pass locally, but nothing runs them automatically on push. Production: GitHub Actions running `pytest` on every commit.
+
+## Where the full reasoning lives
+
+Every decision above, along with a few smaller ones, is written out properly in [`docs/decisions.md`](docs/decisions.md), including what I considered and rejected along the way. If you're curious about the why behind any of this, that's the place to look.
